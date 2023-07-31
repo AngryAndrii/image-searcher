@@ -4,9 +4,9 @@ const form = document.querySelector('#search-form');
 const gallery = document.querySelector('#gallery');
 const loadMoreBtn = document.querySelector('#loadMoreBtn');
 
-async function LoadImgs() {
-  const loadedImages = await fetchPhotos();
-
+async function LoadImgs(q) {
+  gallery.innerHTML = '';
+  const loadedImages = await fetchPhotos(q);
   showImgs(loadedImages);
 }
 
@@ -14,26 +14,26 @@ async function showImgs(lddImgs) {
   const images = lddImgs.hits;
   console.log(images);
   const markUp = images
-    .map(el => {
+    .map(({ webformatURL, likes, comments, views, downloads }) => {
       return `<div class="gallery-item">
-    <img class="gallery-image" src="${el.webformatURL}" alt="" />
+    <img class="gallery-image" src="${webformatURL}" alt="" />
     <div class="info-block">
       <ul>
         <li>
         <p class= "descr">likes</p>
-        <p class="likes">${el.likes}</p>
+        <p class="likes">${likes}</p>
         </li>
         <li>
         <p class= "descr">comments</p>
-        <p class="comments">${el.comments}</p>
+        <p class="comments">${comments}</p>
         </li>
         <li>
         <p class= "descr">views</p>
-        <p class="views">${el.views}</p>
+        <p class="views">${views}</p>
         </li>
         <li>
         <p class= "descr">downloads</p>
-        <p class="downloads">${el.downloads}</p>
+        <p class="downloads">${downloads}</p>
         </li>
       </ul>
     </div>
@@ -43,4 +43,10 @@ async function showImgs(lddImgs) {
   gallery.insertAdjacentHTML('beforeend', markUp);
 }
 
-LoadImgs();
+async function handleSearchForm(event) {
+  event.preventDefault();
+  let currentQuery = form.firstElementChild.value;
+  LoadImgs(currentQuery);
+}
+
+form.addEventListener('submit', handleSearchForm);
