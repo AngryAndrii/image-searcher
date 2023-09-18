@@ -1,11 +1,12 @@
 'use strict';
 
-import axios from 'axios';
+// import axios from 'axios';
 
 const BASE_URL = 'https://pixabay.com/api/?';
 const KEY = '38146382-d0cd2611e4be2665aae5df53b';
 
-page = 1;
+const q = null;
+const page = 1;
 
 async function fetchPhotos(q) {
   const response = await fetch(`${BASE_URL}key=${KEY}&&q=${q}&page=${page}`);
