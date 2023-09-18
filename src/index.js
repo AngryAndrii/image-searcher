@@ -1,18 +1,30 @@
 import { fetchPhotos } from './js/PixabayAPI';
+import { NotiflixObj } from './js/Notiflix';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('#gallery');
 const loadMoreBtn = document.querySelector('#loadMoreBtn');
 
-async function LoadImgs(q) {
+function galleryClear() {
   gallery.innerHTML = '';
+}
+function clearInput() {
+  form.firstElementChild.value = '';
+}
+
+async function LoadImgs(q) {
+  clearInput();
+  galleryClear();
   const loadedImages = await fetchPhotos(q);
+  if (!loadedImages.hits.length) {
+    NotiflixObj.incorrectRequest();
+  }
+  console.log(loadedImages);
   showImgs(loadedImages);
 }
 
 async function showImgs(lddImgs) {
   const images = lddImgs.hits;
-  console.log(images);
   const markUp = images
     .map(({ webformatURL, likes, comments, views, downloads }) => {
       return `<div class="gallery-item">
@@ -45,7 +57,13 @@ async function showImgs(lddImgs) {
 
 async function handleSearchForm(event) {
   event.preventDefault();
-  let currentQuery = form.firstElementChild.value;
+  let currentQuery = form.firstElementChild.value.trim();
+  if (!currentQuery) {
+    NotiflixObj.voidField();
+    clearInput();
+    galleryClear();
+    return;
+  }
   LoadImgs(currentQuery);
 }
 
